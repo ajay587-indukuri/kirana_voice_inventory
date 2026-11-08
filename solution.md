@@ -31,6 +31,11 @@ The goal is to bring inventory management and grocery order processing together 
 - **Google Gemini** – Natural-language understanding and product extraction
 - **HTML, CSS & JavaScript** – User interface
 
+## Video Demonstration
+
+🎥 **Watch the working demonstration of ManaKirana AI:**  
+[**Google Drive Demo Video**](https://drive.google.com/file/d/1zKFwkYEx4VQrbj8Z9kZml78_npoQXGl_/view?usp=sharing)
+
 ## Expected Impact
 
 ManaKirana AI aims to reduce manual work, simplify order processing, improve inventory visibility and minimise pricing calculation errors for neighbourhood grocery stores.

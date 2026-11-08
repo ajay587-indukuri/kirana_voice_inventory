@@ -6,10 +6,12 @@
 [![Gnani AI](https://img.shields.io/badge/STT-Gnani%20Prisma%20v3.0-orange.svg)](https://gnani.ai/)
 [![Gemini](https://img.shields.io/badge/AI-Google%20Gemini%20v1beta-8E75B2.svg)](https://ai.google.dev/)
 [![Deployment](https://img.shields.io/badge/Deployed%20on-Vercel-black.svg)](https://vercel.com/)
+[![Demo Video](https://img.shields.io/badge/Demo%20Video-Google%20Drive-E53935.svg?logo=google-drive&logoColor=white)](https://drive.google.com/file/d/1zKFwkYEx4VQrbj8Z9kZml78_npoQXGl_/view?usp=sharing)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey.svg)]()
 
 > **Great Indian AI Internship Challenge Submission — Gnani AI**  
 > **Vision:** Making neighbourhood kirana stores smarter through regional voice AI and automation.  
+> 🎥 **Demo Video:** [**Watch Live Video Demonstration**](https://drive.google.com/file/d/1zKFwkYEx4VQrbj8Z9kZml78_npoQXGl_/view?usp=sharing)  
 > 📄 **Complete Solution Blueprint:** Detailed challenge vision, problem analysis, and architectural roadmap available in [**solution.md**](solution.md).
 
 ---
@@ -193,6 +195,7 @@ This repository includes bundled `imageio-ffmpeg` and relative path configuratio
 
 ## 10. Challenge Deliverables
 
+- 🎥 **Video Demonstration:** [**Watch Live Demo on Google Drive**](https://drive.google.com/file/d/1zKFwkYEx4VQrbj8Z9kZml78_npoQXGl_/view?usp=sharing)
 - 📄 **Vision & Specification:** [**solution.md**](solution.md)
 - 🎙️ **Sample Audio File:** [`telugu_order.m4a`](telugu_order.m4a)
 - 💻 **Live Application Code:** [`app.py`](app.py), [`api.py`](api.py), [`templates/index.html`](templates/index.html)
