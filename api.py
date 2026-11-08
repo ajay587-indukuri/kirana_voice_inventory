@@ -44,7 +44,11 @@ GNANI_API_KEY = os.getenv(
 gnani = GnaniSTTClient(api_key=GNANI_API_KEY)
 
 gemini_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-client = genai.Client(api_key=gemini_key) if gemini_key else genai.Client()
+gemini = genai.Client(
+    api_key=gemini_key,
+    http_options={"api_version": "v1beta"}
+)
+client = gemini
 
 
 def transcribe_audio(audio_file):
