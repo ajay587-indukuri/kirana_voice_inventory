@@ -1,10 +1,39 @@
 import os
 import tempfile
 import json
+import shutil
+import imageio_ffmpeg
 from dotenv import load_dotenv
 from gnani.stt import GnaniSTTClient
 from google import genai
 from google.genai import types
+
+# Configure FFmpeg executable path from imageio-ffmpeg for Vercel/serverless environments
+ffmpeg_path = imageio_ffmpeg.get_ffmpeg_exe()
+ffmpeg_dir = os.path.dirname(ffmpeg_path)
+
+# Ensure an executable named 'ffmpeg' exists in PATH (imageio-ffmpeg names it e.g. ffmpeg-linux64-v...)
+alias_path = os.path.join(ffmpeg_dir, "ffmpeg")
+if not os.path.exists(alias_path):
+    try:
+        os.symlink(ffmpeg_path, alias_path)
+    except Exception:
+        tmp_bin = os.path.join(tempfile.gettempdir(), "bin")
+        os.makedirs(tmp_bin, exist_ok=True)
+        alias_path = os.path.join(tmp_bin, "ffmpeg")
+        if not os.path.exists(alias_path):
+            try:
+                os.symlink(ffmpeg_path, alias_path)
+            except Exception:
+                shutil.copy2(ffmpeg_path, alias_path)
+                os.chmod(alias_path, 0o755)
+        ffmpeg_dir = tmp_bin
+
+os.environ["PATH"] = (
+    ffmpeg_dir
+    + os.pathsep
+    + os.environ.get("PATH", "")
+)
 
 load_dotenv()
 
