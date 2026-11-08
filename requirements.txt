@@ -1,0 +1,4 @@
+Flask
+gnani-vachana
+google-genai
+python-dotenv

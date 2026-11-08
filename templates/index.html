@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ManaKirana AI</title>
+  <style>
+    :root {
+      --green: #124b3b;
+      --green-dark: #0b382c;
+      --green-soft: #eaf3ee;
+      --orange: #e87932;
+      --ink: #1d2924;
+      --muted: #68766f;
+      --line: #e3e9e5;
+      --paper: #ffffff;
+      --bg: #f5f7f4;
+      --red: #b42318;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .topbar {
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+      padding: 17px 5vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      width: 42px; height: 42px; border-radius: 13px;
+      display: grid; place-items: center;
+      color: white; background: var(--green);
+      font-size: 23px; font-weight: 800;
+    }
+    .brand-name { font-size: 19px; font-weight: 800; color: var(--green-dark); }
+    .tagline { color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .status {
+      color: var(--green); background: var(--green-soft);
+      padding: 8px 12px; border-radius: 999px;
+      font-size: 12px; font-weight: 700;
+    }
+    main { width: min(920px, 92vw); margin: 42px auto; }
+    .intro { margin-bottom: 24px; }
+    .eyebrow {
+      color: var(--orange); font-size: 12px; font-weight: 800;
+      letter-spacing: .11em; text-transform: uppercase;
+    }
+    h1 { margin: 8px 0; font-size: clamp(27px, 4vw, 38px); color: var(--green-dark); }
+    .intro p { margin: 0; color: var(--muted); line-height: 1.6; }
+    .card {
+      background: var(--paper); border: 1px solid var(--line);
+      border-radius: 18px; padding: clamp(20px, 4vw, 32px);
+      box-shadow: 0 8px 28px rgba(20, 50, 35, .05);
+    }
+    .card h2 { margin: 0 0 7px; font-size: 20px; color: var(--green-dark); }
+    .help { color: var(--muted); font-size: 14px; margin: 0 0 22px; line-height: 1.5; }
+    .upload-area {
+      border: 1.5px dashed #b9c9bf; border-radius: 14px;
+      background: #fbfdfb; padding: 26px 18px; text-align: center;
+    }
+    .upload-icon {
+      width: 52px; height: 52px; border-radius: 16px;
+      background: var(--green-soft); color: var(--green);
+      display: grid; place-items: center; margin: 0 auto 12px;
+      font-size: 25px;
+    }
+    input[type=file] { display: block; width: 100%; max-width: 360px; margin: 14px auto 0; color: var(--muted); }
+    .file-note { font-size: 12px; color: var(--muted); margin-top: 10px; }
+    button {
+      border: 0; border-radius: 11px; padding: 13px 20px;
+      background: var(--green); color: white; font-size: 14px;
+      font-weight: 750; cursor: pointer; width: 100%; margin-top: 18px;
+    }
+    button:hover { background: var(--green-dark); }
+    button:disabled { opacity: .55; cursor: wait; }
+    .result {
+      margin-top: 22px; border: 1px solid var(--line);
+      border-radius: 14px; padding: 18px; background: #fff;
+    }
+    .result-label { color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+    #transcript { margin: 10px 0 0; font-size: 18px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
+    #message { min-height: 20px; margin: 12px 0 0; font-size: 13px; color: var(--muted); }
+    #message.error { color: var(--red); }
+    .pipeline {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px;
+    }
+    .step {
+      flex: 1; min-width: 150px; border: 1px solid var(--line);
+      border-radius: 12px; padding: 12px; background: white;
+    }
+    .step strong { display: block; color: var(--green-dark); font-size: 13px; }
+    .step span { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; }
+    footer { text-align: center; color: #87938c; font-size: 12px; padding: 10px 20px 28px; }
+    .input-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      background: var(--bg);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+    }
+    .tab-btn {
+      flex: 1;
+      margin-top: 0 !important;
+      padding: 10px 14px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 9px;
+      border: 0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: auto;
+    }
+    .tab-btn:hover {
+      background: rgba(18, 75, 59, 0.05);
+      color: var(--green-dark);
+    }
+    .tab-btn.active {
+      background: var(--paper);
+      color: var(--green-dark);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .mic-container {
+      border: 1.5px dashed #b9c9bf;
+      border-radius: 14px;
+      background: #fbfdfb;
+      padding: 26px 18px;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+    .mic-container.recording {
+      border-color: var(--red);
+      background: #fffafa;
+    }
+    .mic-button-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .mic-circle-btn {
+      width: 76px !important;
+      height: 76px !important;
+      border-radius: 50% !important;
+      background: var(--green);
+      color: white;
+      font-size: 32px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      cursor: pointer;
+      margin: 0 !important;
+      padding: 0;
+      transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 16px rgba(18, 75, 59, 0.25);
+    }
+    .mic-circle-btn:hover {
+      transform: scale(1.06);
+      background: var(--green-dark);
+    }
+    .mic-circle-btn.recording {
+      background: var(--red);
+      animation: pulse-ring 1.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulse-ring {
+      0% {
+        box-shadow: 0 0 0 0 rgba(180, 35, 24, 0.7);
+        transform: scale(1);
+      }
+      70% {
+        box-shadow: 0 0 0 16px rgba(180, 35, 24, 0);
+        transform: scale(1.06);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(180, 35, 24, 0);
+        transform: scale(1);
+      }
+    }
+    .recording-timer {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+      margin-top: 4px;
+    }
+    .mic-status {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* Refined Grocery Cart & Presets UI */
+    .cart-card {
+      border: 1.5px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      background: white;
+      margin-top: 14px;
+      box-shadow: 0 4px 16px rgba(18, 75, 59, 0.04);
+    }
+    .cart-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .cart-table th {
+      background: #f4f8f5;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding: 12px 14px;
+      border-bottom: 1.5px solid var(--line);
+      text-align: left;
+    }
+    .cart-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f0f4f1;
+      vertical-align: middle;
+    }
+    .cart-table tr:last-child td {
+      border-bottom: 0;
+    }
+    .cart-table tr:hover {
+      background: #fbfdfc;
+    }
+    .cart-input {
+      border: 1.5px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 13.5px;
+      font-family: inherit;
+      color: var(--ink);
+      background: white;
+      transition: all 0.15s ease;
+      box-sizing: border-box;
+    }
+    .cart-input:focus {
+      outline: none;
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(18, 75, 59, 0.12);
+    }
+    .price-input-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      width: 100px;
+    }
+    .price-input-wrap .currency-symbol {
+      position: absolute;
+      left: 10px;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 13px;
+      pointer-events: none;
+    }
+    .price-input-wrap .cart-input {
+      padding-left: 22px;
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      width: 100%;
+    }
+    .qty-unit-wrap {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .qty-input {
+      width: 65px !important;
+      text-align: center;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .unit-input {
+      width: 75px !important;
+      color: var(--muted);
+    }
+    .subtotal-cell {
+      font-weight: 800;
+      font-size: 14.5px;
+      color: var(--green-dark);
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+    .row-remove-btn {
+      width: 30px !important;
+      height: 30px !important;
+      border-radius: 8px !important;
+      background: transparent !important;
+      color: #9aa6a0 !important;
+      font-size: 18px !important;
+      display: grid !important;
+      place-items: center !important;
+      border: 1px solid transparent !important;
+      cursor: pointer !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      transition: all 0.15s ease !important;
+    }
+    .row-remove-btn:hover {
+      background: #fee4e2 !important;
+      color: var(--red) !important;
+      border-color: #fecdca !important;
+    }
+    .preset-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 10.5px;
+      color: #0d5f47;
+      background: #e6f6ee;
+      padding: 2px 6px;
+      border-radius: 5px;
+      margin-top: 3px;
+      font-weight: 700;
+    }
+    .cart-actions-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+    }
+    .btn-secondary {
+      background: white !important;
+      color: var(--green-dark) !important;
+      border: 1.5px solid var(--line) !important;
+      font-weight: 700 !important;
+      width: auto !important;
+      margin-top: 0 !important;
+      padding: 9px 15px !important;
+      border-radius: 10px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      font-size: 13px !important;
+      transition: all 0.15s ease !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .btn-secondary:hover {
+      background: var(--green-soft) !important;
+      border-color: #b9c9bf !important;
+      transform: translateY(-1px);
+    }
+    .cart-summary-box {
+      background: #f7faf8;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+    }
+    .summary-total {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--green-dark);
+      font-variant-numeric: tabular-nums;
+    }
+    .preset-toast {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-top: 10px;
+      background: #eaf8f0;
+      color: #0e5b42;
+      border: 1px solid #c2ecd5;
+      display: none;
+      line-height: 1.4;
+    }
+    .preset-chip {
+      background: white;
+      border: 1px solid var(--line);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--ink);
+    }
+    .preset-chip strong {
+      color: var(--green-dark);
+    }
+
+    @media (max-width: 560px) {
+      .topbar { padding: 14px 4vw; }
+      .status { display: none; }
+      main { margin: 28px auto; }
+      .upload-area { padding: 22px 12px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">మ</div>
+      <div>
+        <div class="brand-name">ManaKirana AI</div>
+        <div class="tagline">Your Voice. Your Kirana. Your AI.</div>
+      </div>
+    </div>
+    <div class="status">● Voice ordering demo</div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h1>నమస్కారం! Welcome to ManaKirana</h1>
+      <p>Upload a Telugu, Tanglish, or English grocery-order recording. ManaKirana will convert the audio into text.</p>
+    </section>
+
+    <section class="card">
+      <h2>New Voice Order</h2>
+      <p class="help">Speak your customer's order using the microphone, or upload an audio file.</p>
+
+      <div class="input-tabs">
+        <button type="button" class="tab-btn active" id="tabMic">🎙️ Record with Mic</button>
+        <button type="button" class="tab-btn" id="tabUpload">📁 Upload Audio File</button>
+      </div>
+
+      <form id="audioForm">
+        <!-- Mic Recording Area -->
+        <div id="micArea" class="mic-container">
+          <div class="mic-button-wrapper">
+            <button type="button" id="micButton" class="mic-circle-btn" title="Tap to start/stop recording">
+              <span id="micIcon">🎙️</span>
+            </button>
+          </div>
+          <div id="recordingTimer" class="recording-timer">00:00</div>
+          <div id="micStatus" class="mic-status">Tap microphone to speak</div>
+          <audio id="audioPlayback" controls style="display:none; width: 100%; margin-top: 15px;"></audio>
+        </div>
+
+        <!-- File Upload Area -->
+        <div id="uploadArea" class="upload-area" style="display:none">
+          <div class="upload-icon">♫</div>
+          <strong>Select your customer’s voice recording</strong>
+          <input id="audioFile" name="audio" type="file" accept=".m4a,.wav,.mp3,.flac,.ogg,.webm,audio/*">
+          <div class="file-note">Supported formats: M4A, WAV, MP3, FLAC, OGG, WEBM</div>
+        </div>
+
+        <button id="processButton" type="submit">Transcribe audio</button>
+      </form>
+
+      <p id="message" role="status">Waiting for an audio file.</p>
+
+      <div class="result">
+        <div class="result-label">Speech transcript · Prisma (STT)</div>
+        <p id="transcript">Your transcript will appear here.</p>
+      </div>
+
+      <button id="extractButton" type="button" style="display:none">
+        Understand Grocery Order
+      </button>
+
+      <div id="orderResult" class="result" style="display:none">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <div class="result-label">Grocery Cart · Gemini</div>
+          <span id="itemCountBadge" style="font-size:12px; font-weight:700; color:var(--green); background:var(--green-soft); padding:3px 10px; border-radius:999px;">0 items</span>
+        </div>
+
+        <div class="cart-card">
+          <div style="overflow-x:auto">
+            <table class="cart-table">
+              <thead>
+                <tr>
+                  <th style="min-width:140px">Product</th>
+                  <th style="min-width:140px">Quantity & Unit</th>
+                  <th style="min-width:120px">Unit Price</th>
+                  <th style="min-width:100px; text-align:right">Subtotal</th>
+                  <th style="width:40px"></th>
+                </tr>
+              </thead>
+              <tbody id="cartItems"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="cart-actions-bar">
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" id="addItemButton" class="btn-secondary">
+              <span>+</span> Add item
+            </button>
+            <button type="button" id="savePresetsButton" class="btn-secondary" title="Save current prices for these items to auto-fill next time">
+              <span>💾</span> Save Price Presets
+            </button>
+          </div>
+          <button type="button" id="managePresetsToggle" class="btn-secondary" style="font-size:12px; padding:7px 12px;" title="View and manage all saved prices">
+            📋 Saved Prices (<span id="presetCount">0</span>)
+          </button>
+        </div>
+
+        <div id="presetToast" class="preset-toast"></div>
+
+        <!-- Collapsible Saved Price Manager -->
+        <div id="presetsManager" style="display:none; margin-top:14px; background:#f9fbfa; border:1px solid var(--line); border-radius:12px; padding:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <strong style="font-size:13px; color:var(--green-dark);">Shopkeeper's Saved Price Catalogue</strong>
+            <button type="button" id="clearPresetsBtn" style="width:auto; margin:0; padding:4px 8px; font-size:11px; background:transparent; color:var(--red); border:1px solid #fecdca; border-radius:6px; cursor:pointer;">Reset to defaults</button>
+          </div>
+          <div id="presetsList" style="display:flex; flex-wrap:wrap; gap:6px; max-height:140px; overflow-y:auto; padding:2px;"></div>
+        </div>
+
+        <div class="cart-summary-box">
+          <div>
+            <span style="font-size:13px; color:var(--muted); display:block;">Total Estimated Bill</span>
+            <span style="font-size:11px; color:var(--muted);">All prices in Indian Rupees (₹)</span>
+          </div>
+          <div class="summary-total">₹<span id="cartTotal">0.00</span></div>
+        </div>
+
+        <button type="button" id="confirmOrderButton">
+          ✓ Confirm Order
+        </button>
+
+        <p id="cartMessage" style="margin-top:10px; font-weight:600;"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer>ManaKirana AI · Built for the Great Indian AI Internship Challenge</footer>
+
+  <script>
+    const form = document.getElementById("audioForm");
+    const fileInput = document.getElementById("audioFile");
+    const button = document.getElementById("processButton");
+    const message = document.getElementById("message");
+    const transcript = document.getElementById("transcript");
+    const extractButton = document.getElementById("extractButton");
+    const orderResult = document.getElementById("orderResult");
+
+    // Tabs & Mode Switcher
+    const tabMic = document.getElementById("tabMic");
+    const tabUpload = document.getElementById("tabUpload");
+    const micArea = document.getElementById("micArea");
+    const uploadArea = document.getElementById("uploadArea");
+
+    let inputMode = "mic"; // "mic" or "upload"
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let recordedBlob = null;
+    let recordingInterval = null;
+    let recordingSeconds = 0;
+
+    tabMic.addEventListener("click", () => {
+      inputMode = "mic";
+      tabMic.classList.add("active");
+      tabUpload.classList.remove("active");
+      micArea.style.display = "block";
+      uploadArea.style.display = "none";
+      message.textContent = recordedBlob ? "Recorded voice ready to transcribe." : "Waiting for voice recording.";
+      message.className = "";
+    });
+
+    tabUpload.addEventListener("click", () => {
+      inputMode = "upload";
+      tabUpload.classList.add("active");
+      tabMic.classList.remove("active");
+      uploadArea.style.display = "block";
+      micArea.style.display = "none";
+      message.textContent = fileInput.files[0] ? "Selected: " + fileInput.files[0].name : "Waiting for an audio file.";
+      message.className = "";
+    });
+
+    // Mic recording logic
+    const micButton = document.getElementById("micButton");
+    const micIcon = document.getElementById("micIcon");
+    const micStatus = document.getElementById("micStatus");
+    const recordingTimer = document.getElementById("recordingTimer");
+    const audioPlayback = document.getElementById("audioPlayback");
+
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60).toString().padStart(2, '0');
+      const s = (sec % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    async function startRecording() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        
+        let options = {};
+        if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+          options = { mimeType: 'audio/webm;codecs=opus' };
+        } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+          options = { mimeType: 'audio/webm' };
+        } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+          options = { mimeType: 'audio/mp4' };
+        } else if (MediaRecorder.isTypeSupported('audio/ogg')) {
+          options = { mimeType: 'audio/ogg' };
+        }
+
+        mediaRecorder = new MediaRecorder(stream, options);
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data && event.data.size > 0) {
+            audioChunks.push(event.data);
+          }
+        };
+
+        mediaRecorder.onstop = () => {
+          const mimeType = mediaRecorder.mimeType || 'audio/webm';
+          recordedBlob = new Blob(audioChunks, { type: mimeType });
+          audioPlayback.src = URL.createObjectURL(recordedBlob);
+          audioPlayback.style.display = "block";
+          micStatus.textContent = "Recording ready! Click 'Transcribe audio' below.";
+          message.textContent = "Voice recording captured successfully.";
+          message.className = "";
+
+          stream.getTracks().forEach(track => track.stop());
+        };
+
+        mediaRecorder.start(200);
+        recordingSeconds = 0;
+        recordingTimer.textContent = "00:00";
+        recordingInterval = setInterval(() => {
+          recordingSeconds++;
+          recordingTimer.textContent = formatTime(recordingSeconds);
+          if (recordingSeconds >= 60) {
+            stopRecording();
+          }
+        }, 1000);
+
+        micButton.classList.add("recording");
+        micArea.classList.add("recording");
+        micIcon.textContent = "⏹";
+        micStatus.textContent = "Listening... Speak your order (Tap ⏹ to stop)";
+        message.textContent = "Recording in progress...";
+        message.className = "";
+        audioPlayback.style.display = "none";
+      } catch (err) {
+        console.error("Mic error:", err);
+        micStatus.textContent = "Microphone unavailable: " + err.message;
+        message.textContent = "Microphone access denied. Please grant permission in your browser.";
+        message.className = "error";
+      }
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+      }
+      clearInterval(recordingInterval);
+      micButton.classList.remove("recording");
+      micArea.classList.remove("recording");
+      micIcon.textContent = "🎙️";
+    }
+
+    micButton.addEventListener("click", () => {
+      if (mediaRecorder && mediaRecorder.state === "recording") {
+        stopRecording();
+      } else {
+        startRecording();
+      }
+    });
+
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files[0]) {
+        message.textContent = "Selected: " + fileInput.files[0].name;
+        message.className = "";
+      }
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (mediaRecorder && mediaRecorder.state === "recording") {
+        stopRecording();
+      }
+
+      let fileToSend = null;
+
+      if (inputMode === "mic") {
+        if (!recordedBlob) {
+          message.textContent = "Please record your voice first using the microphone.";
+          message.className = "error";
+          return;
+        }
+        const mime = recordedBlob.type.toLowerCase();
+        let ext = "webm";
+        if (mime.includes("mp4")) ext = "mp4";
+        else if (mime.includes("ogg")) ext = "ogg";
+        else if (mime.includes("wav")) ext = "wav";
+
+        fileToSend = new File([recordedBlob], `mic_order.${ext}`, { type: recordedBlob.type });
+      } else {
+        const file = fileInput.files[0];
+        if (!file) {
+          message.textContent = "Please choose an audio file first.";
+          message.className = "error";
+          return;
+        }
+        fileToSend = file;
+      }
+
+      const formData = new FormData();
+      formData.append("audio", fileToSend);
+
+      button.disabled = true;
+      button.textContent = "Transcribing…";
+      message.className = "";
+      message.textContent = "Sending audio to Prisma. Please wait.";
+      transcript.textContent = "";
+
+      try {
+        const response = await fetch("/transcribe", {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok || data.success !== true) {
+          throw new Error(data.error || `Request failed (${response.status})`);
+        }
+
+        transcript.textContent = data.transcript || "No transcript was returned.";
+        message.textContent = "Transcription completed successfully.";
+        extractButton.style.display = "block";
+      } catch (error) {
+        message.className = "error";
+        message.textContent = "Transcription failed: " + error.message;
+        transcript.textContent = "No transcript available.";
+      } finally {
+        button.disabled = false;
+        button.textContent = "Transcribe audio";
+      }
+    });
+
+    // Elements for Cart & Presets
+    const cartItems = document.getElementById("cartItems");
+    const cartTotal = document.getElementById("cartTotal");
+    const itemCountBadge = document.getElementById("itemCountBadge");
+    const addItemButton = document.getElementById("addItemButton");
+    const savePresetsButton = document.getElementById("savePresetsButton");
+    const managePresetsToggle = document.getElementById("managePresetsToggle");
+    const presetCount = document.getElementById("presetCount");
+    const presetToast = document.getElementById("presetToast");
+    const presetsManager = document.getElementById("presetsManager");
+    const presetsList = document.getElementById("presetsList");
+    const clearPresetsBtn = document.getElementById("clearPresetsBtn");
+    const confirmOrderButton = document.getElementById("confirmOrderButton");
+    const cartMessage = document.getElementById("cartMessage");
+
+    let cart = [];
+
+    // Preloaded standard Kirana catalog prices (Telugu & English)
+    const defaultPresets = {
+      "rice": 60,
+      "sona masoori": 65,
+      "basmati rice": 110,
+      "biyyam": 60,
+      "oil": 140,
+      "sunflower oil": 140,
+      "groundnut oil": 180,
+      "noone": 140,
+      "toor dal": 160,
+      "kandi pappu": 160,
+      "moong dal": 120,
+      "pesara pappu": 120,
+      "urad dal": 140,
+      "minapa pappu": 140,
+      "sugar": 44,
+      "panchadara": 44,
+      "salt": 25,
+      "uppu": 25,
+      "atta": 45,
+      "wheat flour": 45,
+      "godhumalu": 45,
+      "milk": 34,
+      "paalu": 34,
+      "tea powder": 120,
+      "coffee": 90,
+      "onion": 35,
+      "onions": 35,
+      "ullipaya": 35,
+      "potato": 30,
+      "potatoes": 30,
+      "bangaladumpa": 30,
+      "tomato": 25,
+      "tomatoes": 25,
+      "tamata": 25,
+      "eggs": 6,
+      "guddu": 6,
+      "chilli powder": 80,
+      "karam": 80,
+      "turmeric": 50,
+      "pasupu": 50,
+      "ghee": 650,
+      "neyyi": 650,
+      "jaggery": 60,
+      "bellam": 60
+    };
+
+    function getPricePresets() {
+      try {
+        const stored = localStorage.getItem("manakirana_price_presets");
+        if (stored) {
+          return JSON.parse(stored);
+        }
+      } catch (e) {
+        console.error("Failed to load presets:", e);
+      }
+      return { ...defaultPresets };
+    }
+
+    function savePricePresets(presets) {
+      try {
+        localStorage.setItem("manakirana_price_presets", JSON.stringify(presets));
+      } catch (e) {
+        console.error("Failed to save presets:", e);
+      }
+    }
+
+    function findPresetPrice(productName) {
+      if (!productName) return 0;
+      const presets = getPricePresets();
+      const clean = productName.trim().toLowerCase();
+
+      // 1. Direct match
+      if (presets[clean] !== undefined) return presets[clean];
+
+      // 2. Contains match
+      for (const [key, val] of Object.entries(presets)) {
+        if (clean.includes(key) || key.includes(clean)) {
+          return val;
+        }
+      }
+      return 0;
+    }
+
+    function updatePresetCount() {
+      const presets = getPricePresets();
+      const count = Object.keys(presets).length;
+      if (presetCount) presetCount.textContent = count;
+    }
+
+    function showPresetToast(msg, isError = false) {
+      presetToast.style.display = "block";
+      presetToast.style.background = isError ? "#fff0f0" : "#eaf8f0";
+      presetToast.style.color = isError ? "var(--red)" : "#0e5b42";
+      presetToast.style.borderColor = isError ? "#fed7d7" : "#c2ecd5";
+      presetToast.innerHTML = msg;
+      setTimeout(() => {
+        presetToast.style.display = "none";
+      }, 5000);
+    }
+
+    function renderPresetsList() {
+      if (!presetsList) return;
+      presetsList.replaceChildren();
+      const presets = getPricePresets();
+      const entries = Object.entries(presets);
+
+      if (entries.length === 0) {
+        presetsList.innerHTML = '<span style="font-size:12px; color:var(--muted)">No price presets saved yet.</span>';
+        return;
+      }
+
+      entries.sort(([a], [b]) => a.localeCompare(b)).forEach(([name, price]) => {
+        const chip = document.createElement("span");
+        chip.className = "preset-chip";
+        chip.innerHTML = `<span>${escapeHTML(name)}</span> <strong>₹${price}</strong>`;
+        presetsList.appendChild(chip);
+      });
+    }
+
+    function updateRowSubtotal(row, item) {
+      const quantity = Number(item.quantity) || 0;
+      const price = Number(item.price) || 0;
+      const subtotal = quantity * price;
+
+      const subtotalEl = row.querySelector(".subtotal-cell");
+      if (subtotalEl) {
+        subtotalEl.textContent = `₹${subtotal.toFixed(2)}`;
+      }
+      updateGrandTotal();
+    }
+
+    function updateGrandTotal() {
+      let total = 0;
+      cart.forEach(item => {
+        const q = Number(item.quantity) || 0;
+        const p = Number(item.price) || 0;
+        total += (q * p);
+      });
+      cartTotal.textContent = total.toFixed(2);
+      if (itemCountBadge) {
+        itemCountBadge.textContent = `${cart.length} item${cart.length === 1 ? '' : 's'}`;
+      }
+    }
+
+    function renderCart() {
+      cartItems.replaceChildren();
+
+      if (cart.length === 0) {
+        const emptyRow = document.createElement("tr");
+        emptyRow.innerHTML = `<td colspan="5" style="text-align:center; padding:24px; color:var(--muted); font-size:13px;">No items in your cart. Speak an order or click "+ Add item".</td>`;
+        cartItems.appendChild(emptyRow);
+        updateGrandTotal();
+        return;
+      }
+
+      cart.forEach((item, index) => {
+        const quantity = Number(item.quantity) || 0;
+        const price = Number(item.price) || 0;
+        const subtotal = quantity * price;
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>
+                <input type="text" class="cart-input product"
+                    placeholder="Product name"
+                    value="${escapeHTML(item.name)}">
+                ${item.isPreset ? `<div class="preset-badge">⚡ Auto-filled preset</div>` : ''}
+            </td>
+            <td>
+                <div class="qty-unit-wrap">
+                    <input type="number" class="cart-input qty-input quantity"
+                        min="0" step="0.01" value="${quantity}">
+                    <input type="text" class="cart-input unit-input unit"
+                        placeholder="unit"
+                        value="${escapeHTML(item.unit)}">
+                </div>
+            </td>
+            <td>
+                <div class="price-input-wrap">
+                    <span class="currency-symbol">₹</span>
+                    <input type="number" class="cart-input price"
+                        min="0" step="0.01" placeholder="0.00"
+                        value="${price > 0 ? price : ''}">
+                </div>
+            </td>
+            <td class="subtotal-cell">
+                ₹${subtotal.toFixed(2)}
+            </td>
+            <td style="text-align:center">
+                <button type="button" class="row-remove-btn remove" title="Remove item">
+                    ×
+                </button>
+            </td>
+        `;
+
+        // Update name
+        row.querySelector(".product").addEventListener("input", e => {
+          item.name = e.target.value;
+          if (Number(item.price) === 0) {
+            const preset = findPresetPrice(item.name);
+            if (preset > 0) {
+              item.price = preset;
+              item.isPreset = true;
+              row.querySelector(".price").value = preset;
+              updateRowSubtotal(row, item);
+            }
+          }
+        });
+
+        // Update quantity without full re-render to keep focus
+        row.querySelector(".quantity").addEventListener("input", e => {
+          item.quantity = e.target.value;
+          updateRowSubtotal(row, item);
+        });
+
+        // Update unit
+        row.querySelector(".unit").addEventListener("input", e => {
+          item.unit = e.target.value;
+        });
+
+        // Update price without full re-render to keep focus
+        row.querySelector(".price").addEventListener("input", e => {
+          item.price = e.target.value;
+          item.isPreset = false;
+          updateRowSubtotal(row, item);
+        });
+
+        // Remove item
+        row.querySelector(".remove").addEventListener("click", () => {
+          cart.splice(index, 1);
+          renderCart();
+        });
+
+        cartItems.appendChild(row);
+      });
+
+      updateGrandTotal();
+    }
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[char]);
+    }
+
+    function loadCart(items) {
+      cart = items.map(item => {
+        const preset = findPresetPrice(item.name || "");
+        return {
+          name: item.name || "",
+          quantity: item.quantity ?? 1,
+          unit: item.unit || "piece",
+          price: preset > 0 ? preset : 0,
+          isPreset: preset > 0
+        };
+      });
+
+      renderCart();
+      document.getElementById("orderResult").style.display = "block";
+      updatePresetCount();
+      renderPresetsList();
+    }
+
+    addItemButton.addEventListener("click", () => {
+      cart.push({
+        name: "",
+        quantity: 1,
+        unit: "piece",
+        price: 0,
+        isPreset: false
+      });
+
+      renderCart();
+    });
+
+    // Save Price Presets handler
+    savePresetsButton.addEventListener("click", () => {
+      if (cart.length === 0) {
+        showPresetToast("Your cart is empty. Add items with prices first.", true);
+        return;
+      }
+
+      const presets = getPricePresets();
+      let savedItems = [];
+
+      cart.forEach(item => {
+        const name = item.name.trim().toLowerCase();
+        const price = Number(item.price);
+        if (name && price > 0) {
+          presets[name] = price;
+          item.isPreset = true;
+          savedItems.push(`${item.name.trim()} (₹${price})`);
+        }
+      });
+
+      if (savedItems.length === 0) {
+        showPresetToast("Please enter a price greater than ₹0 for at least one item before saving.", true);
+        return;
+      }
+
+      savePricePresets(presets);
+      updatePresetCount();
+      renderPresetsList();
+      renderCart();
+
+      showPresetToast(`💾 <strong>Saved price presets:</strong> ${savedItems.join(", ")}.<br>These prices will auto-fill next time customers order these items!`);
+    });
+
+    // Toggle saved presets view
+    managePresetsToggle.addEventListener("click", () => {
+      const isHidden = presetsManager.style.display === "none";
+      presetsManager.style.display = isHidden ? "block" : "none";
+      if (isHidden) {
+        renderPresetsList();
+      }
+    });
+
+    // Reset presets to defaults
+    clearPresetsBtn.addEventListener("click", () => {
+      if (confirm("Reset all saved prices to initial kirana defaults?")) {
+        localStorage.removeItem("manakirana_price_presets");
+        updatePresetCount();
+        renderPresetsList();
+        showPresetToast("Price catalogue reset to default staple kirana prices.");
+      }
+    });
+
+    confirmOrderButton.addEventListener("click", () => {
+      if (cart.length === 0) {
+        cartMessage.textContent = "Add at least one product.";
+        cartMessage.style.color = "var(--red)";
+        return;
+      }
+
+      if (cart.some(item =>
+        !item.name.trim() ||
+        Number(item.quantity) <= 0 ||
+        Number(item.price) < 0 ||
+        !Number.isFinite(Number(item.price))
+      )) {
+        cartMessage.textContent =
+          "Please check product names, quantities and valid prices.";
+        cartMessage.style.color = "var(--red)";
+        return;
+      }
+
+      const total = cart.reduce(
+        (sum, item) =>
+          sum + Number(item.quantity) * Number(item.price),
+        0
+      );
+
+      cartMessage.textContent =
+        `✓ Order reviewed! Total: ₹${total.toFixed(2)}. Ready to pack & invoice.`;
+      cartMessage.style.color = "var(--green-dark)";
+    });
+
+    // Initialize preset count on page load
+    updatePresetCount();
+
+    extractButton.addEventListener("click", async () => {
+      extractButton.disabled = true;
+      extractButton.textContent = "Understanding order...";
+
+      orderResult.style.display = "block";
+      cartMessage.textContent = "Processing with Gemini...";
+
+      try {
+        const response = await fetch("/extract", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            transcript: transcript.textContent
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.error || "Extraction failed");
+        }
+
+        cartMessage.textContent = "";
+        loadCart(data.order.items);
+
+      } catch (error) {
+        cartMessage.textContent = "Error: " + error.message;
+      } finally {
+        extractButton.disabled = false;
+        extractButton.textContent = "Understand Grocery Order";
+      }
+    });
+  </script>
+</body>
+</html>
